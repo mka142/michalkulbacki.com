@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt OCR Tracker PWA</title>
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+    <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+<ons-page>
+    <ons-toolbar>
+        <div class="center">Scan</div>
+    </ons-toolbar>
+
+    <ons-tabbar swipeable position="auto">
+        <ons-tab page="tabScan.html" label="Scan" icon="md-camera" active></ons-tab>
+        <ons-tab page="tabSettings.html" label="Settings" icon="md-settings"></ons-tab>
+    </ons-tabbar>
+</ons-page>
+
+<template id="tabScan.html">
+    <ons-page id="TabScan">
+        <div style="padding: 20px; text-align: center;">
+            <ons-button id="scanReceiptBtn" modifier="large"><ons-icon icon="md-receipt"></ons-icon> Scan Receipt</ons-button>
+        </div>
+        <div style="padding: 10px;">
+            <div id="stats"></div>
+            <ons-list id="receiptsList">
+                <!-- Receipts will be rendered here -->
+            </ons-list>
+        </div>
+    </ons-page>
+</template>
+
+<template id="tabSettings.html">
+    <ons-page id="TabSettings">
+        <div style="padding: 20px; max-width: 500px; margin: 0 auto;">
+            <ons-button id="exportJsonBtn" modifier="large"><ons-icon icon="md-download"></ons-icon> Export JSON</ons-button><br><br>
+            <ons-button id="exportImagesBtn" modifier="large"><ons-icon icon="md-image"></ons-icon> Export Images</ons-button><br><br>
+            <ons-button id="addCostBtn" modifier="large"><ons-icon icon="md-edit"></ons-icon> Add Cost</ons-button>
+        </div>
+    </ons-page>
+</template>
+
+<ons-dialog id="addReceiptDialog" cancelable>
+    <div style="padding: 20px; max-width: 350px;">
+        <h3>Add New Receipt</h3>
+        <input type="file" id="dialogFileInput" accept="image/*"><br>
+        <div id="dialogPreview"></div>
+        <div id="ocrProgress"></div>
+        <div id="ocrFields" style="display:none;">
+            <ons-input id="fieldTitle" float placeholder="Title"></ons-input><br>
+            <ons-input id="fieldDate" float placeholder="Date (YYYY-MM-DD)"></ons-input><br>
+            <ons-input id="fieldKind" float placeholder="Kind"></ons-input><br>
+            <ons-input id="fieldPrice" float placeholder="Price"></ons-input><br>
+            <ons-textarea id="fieldOcrText" placeholder="OCR Text"></ons-textarea><br>
+            <ons-button id="saveReceiptBtn" modifier="large">Save</ons-button>
+        </div>
+        <ons-button id="cancelDialogBtn" modifier="quiet">Cancel</ons-button>
+    </div>
+</ons-dialog>
+
+<!-- Add Cost Dialog (no image) -->
+<ons-dialog id="addCostDialog" cancelable>
+    <div style="padding: 20px; max-width: 350px;">
+        <h3>Add Cost (No Image)</h3>
+        <ons-input id="costTitle" float placeholder="Title"></ons-input><br>
+        <ons-input id="costDate" float placeholder="Date (YYYY-MM-DD)"></ons-input><br>
+        <ons-input id="costKind" float placeholder="Kind"></ons-input><br>
+        <ons-input id="costPrice" float placeholder="Price"></ons-input><br>
+        <ons-button id="saveCostBtn" modifier="large">Save</ons-button>
+        <ons-button id="cancelCostDialogBtn" modifier="quiet">Cancel</ons-button>
+    </div>
+</ons-dialog>
+
+<script src="app.js"></script>
+<script>
+// Onsen UI + app logic
+document.addEventListener('DOMContentLoaded', function() {
+    showReceiptsList();
+    // Tabbar toolbar title update
+    document.addEventListener('prechange', function(event) {
+      document.querySelector('ons-toolbar .center').innerHTML = event.tabItem.getAttribute('label');
+    });
+    // Scan tab button
+    $(document).on('click', '#scanReceiptBtn', showAddReceiptPopup);
+    // Settings tab actions
+    $(document).on('click', '#addCostBtn', function() {
+        $('#costTitle').val('');
+        $('#costDate').val('');
+        $('#costKind').val('');
+        $('#costPrice').val('');
+        $('#addCostDialog')[0].show();
+    });
+    $(document).on('click', '#exportJsonBtn', exportReceiptsAsJSON);
+    $(document).on('click', '#exportImagesBtn', exportImages);
+    $('#cancelCostDialogBtn').on('click', function() { $('#addCostDialog')[0].hide(); });
+    $('#saveCostBtn').on('click', async function() {
+        // Validate fields
+        const title = $('#costTitle').val();
+        const date = $('#costDate').val();
+        const kind = $('#costKind').val();
+        const priceVal = $('#costPrice').val();
+        let price = null;
+        if (priceVal) price = parseFloat(priceVal.replace(',', '.').replace(/\s/g, ''));
+        if (!title || !date || !kind || price === null || isNaN(price) || price <= 0) {
+            ons.notification.alert('Please fill all fields with valid values.');
+            return;
+        }
+        try {
+            await addCost({title, date, kind, price});
+            $('#addCostDialog')[0].hide();
+            showReceiptsList();
+        } catch (e) {
+            ons.notification.alert('Error: ' + e.message);
+        }
+    });
+    $('#cancelDialogBtn').on('click', function() { $('#addReceiptDialog')[0].hide(); });
+    $('#saveReceiptBtn').on('click', async function() {
+        // Validate price
+        let priceVal = $('#fieldPrice').val();
+        let price = null;
+        if (priceVal) {
+            price = parseFloat(priceVal.replace(',', '.').replace(/\s/g, ''));
+        }
+        if (price === null || isNaN(price) || price <= 0) {
+            ons.notification.alert('Please enter a valid price (greater than 0).');
+            return;
+        }
+
+        // Validate date
+        let dateVal = $('#fieldDate').val();
+        let date = dateVal;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateVal)) {
+            ons.notification.alert('Please enter a valid date in format YYYY-MM-DD.');
+            return;
+        }
+
+        const data = {
+            title: $('#fieldTitle').val(),
+            date: date,
+            kind: $('#fieldKind').val(),
+            price: price,
+            ocr_text: $('#fieldOcrText').val(),
+            image: $('#dialogPreview img').attr('src') || null
+        };
+        if (window.editingReceiptId) {
+            data.id = window.editingReceiptId;
+            await updateReceipt(data);
+            window.editingReceiptId = null;
+        } else {
+            await saveReceipt(data);
+        }
+        $('#addReceiptDialog')[0].hide();
+        showReceiptsList();
+    });
+
+    $('#dialogFileInput').on('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            $('#dialogPreview').html('<img src="'+ev.target.result+'" style="max-width:200px;">');
+        };
+        reader.readAsDataURL(file);
+        $('#ocrProgress').text('');
+        $('#ocrFields').hide();
+        runOCR(file, function(m) {
+            if (m.status === 'recognizing text') {
+                $('#ocrProgress').text('Progress: ' + Math.round(m.progress*100) + '%');
+            }
+        }).then(function(result) {
+            $('#ocrProgress').text('Done!');
+            $('#ocrFields').show();
+            $('#fieldTitle').val('');
+            $('#fieldDate').val(result.date || '');
+            $('#fieldKind').val(result.kind || '');
+            $('#fieldPrice').val(result.price || '');
+            $('#fieldOcrText').val(result.ocr_text || '');
+        });
+    });
+
+    // Delegate edit button click
+    $(document).on('click', '.editReceiptBtn', async function(e) {
+        e.stopPropagation();
+        const id = $(this).data('id');
+        if (!id) return;
+        const receipts = await getAllReceipts();
+        const rec = receipts.find(r => r.id == id);
+        if (!rec) return;
+        window.editingReceiptId = id;
+        $('#fieldTitle').val(rec.title || '');
+        $('#fieldDate').val(rec.date || '');
+        $('#fieldKind').val(rec.kind || '');
+        $('#fieldPrice').val(rec.price || '');
+        $('#fieldOcrText').val(rec.ocr_text || '');
+        if (rec.image) {
+            $('#dialogPreview').html('<img src="'+rec.image+'" style="max-width:200px;">');
+        } else {
+            $('#dialogPreview').html('');
+        }
+        $('#ocrProgress').text('');
+        $('#ocrFields').show();
+        $('#addReceiptDialog')[0].show();
+    });
+});
+
+async function showReceiptsList() {
+    const receipts = await getAllReceipts();
+        // Group receipts by month
+    const grouped = {};
+    receipts.forEach(r => {
+        const month = (r.date||'').slice(0,7);
+        if (!grouped[month]) grouped[month] = [];
+        grouped[month].push(r);
+    });
+    // Sort months descending
+    const months = Object.keys(grouped).sort((a,b) => b.localeCompare(a));
+    let html = '';
+    months.forEach(month => {
+        const items = grouped[month];
+        const sum = items.reduce((acc, r) => acc + (parseFloat(r.price)||0), 0);
+        // Estimate by the end of month
+        let daysInMonth = 31;
+        let today = new Date();
+        if (month) {
+            const [y, m] = month.split('-');
+            daysInMonth = new Date(y, m, 0).getDate();
+        }
+        const daysSoFar = items
+            .map(r => r.date ? parseInt(r.date.slice(8,10)) : null)
+            .filter(d => d && d <= daysInMonth);
+        const maxDay = daysSoFar.length ? Math.max(...daysSoFar) : today.getDate();
+        const avgPerDay = maxDay ? sum / maxDay : 0;
+        const estimated = avgPerDay * daysInMonth;
+        html += `<ons-list-header>${month} Spendings: ${sum.toFixed(2)} zł Estimated by the end: ${estimated.toFixed(2)} zł</ons-list-header>`;
+        items.forEach(r => {
+            html += `<ons-list-item tappable data-id="${r.id||''}">
+                <div class="left">${r.image ? `<img src="${r.image}" style="width:40px;height:40px;object-fit:cover;">` : ''}</div>
+                <div class="center">
+                    <span>${r.title||'(no title)'}</span><br>
+                    <small>${r.date||''} | ${r.kind||''} | ${r.price||''} zł</small>
+                </div>
+                <div class="right">
+                    <ons-toolbar-button class="editReceiptBtn" data-id="${r.id||''}" title="Edit"><ons-icon icon="md-edit"></ons-icon></ons-toolbar-button>
+                </div>
+            </ons-list-item>`;
+        });
+    });
+    $('#receiptsList').html(html);
+    $('#stats').html('');
+}
+
+function showAddReceiptPopup() {
+    $('#dialogFileInput').val('');
+    $('#dialogPreview').html('');
+    $('#ocrProgress').text('');
+    $('#ocrFields').hide();
+    $('#addReceiptDialog')[0].show();
+}
+</script>
+</body>
+</html>

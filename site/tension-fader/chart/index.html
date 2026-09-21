@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Audio Sync with Graph</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <style>
+      canvas {
+        background-color: #f5f5f5;
+      }
+      audio {
+        width: 100%;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      .chart-container {
+        width: 90vw;
+        height: 40vh; /* Adjust the height as needed */
+        margin: 0 auto;
+        position: relative;
+      }
+      .fullscreen-container {
+        height: 90vh;
+        width: 95vw;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="form">
+      <h1>Audio Sync with Graph</h1>
+      <label for="jsonFile">Select JSON File:</label>
+      <input type="file" id="jsonFile" accept=".json" multiple />
+      
+      <br />
+      <label for="audioFile">Select Audio File:</label>
+      <input type="file" id="audioFile" accept=".mp3, .m4a .wav .ogg" />
+      <br />
+      <label for="startTime">Enter Start Time (ISO format):</label>
+      <input
+        type="text"
+        id="startTime"
+        placeholder="Enter start time in ISO format"
+      />
+    </div>
+    <br />
+    <button id="fullscreenButton">Toggle Fullscreen</button>
+    <div>
+      <div class="chart-container" id="fullscreenContainer">
+        <canvas id="myChart"></canvas>
+      </div>
+      <audio id="audioPlayer" controls></audio>
+    </div>
+
+    <script>
+      let chart;
+      let audioPlayer = document.getElementById("audioPlayer");
+    
+      document
+        .getElementById("jsonFile")
+        .addEventListener("change", handleJsonFile);
+      document
+        .getElementById("audioFile")
+        .addEventListener("change", handleAudioFile);
+      document
+        .getElementById("fullscreenButton")
+        .addEventListener("click", toggleFullscreen);
+    
+      function handleJsonFile(event) {
+        const files = event.target.files;
+        const datasets = [];
+        const colors = [
+          "rgba(75, 192, 192, 1)",
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+        ];
+    
+        Array.from(files).forEach((file, index) => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const data = JSON.parse(e.target.result);
+            const startTime = getStartTime();
+            const labels = data.map((item) => (item.time - startTime) / 1000); // Convert to seconds
+            const values = data.map((item) => item.value);
+    
+            datasets.push({
+              label: `Value ${index + 1}`,
+              data: values,
+              borderColor: colors[index % colors.length],
+              borderWidth: 1,
+              fill: false,
+            });
+    
+            if (datasets.length === files.length) {
+              drawChart(labels, datasets);
+            }
+          };
+          reader.readAsText(file);
+        });
+      }
+    
+      function handleAudioFile(event) {
+        const file = event.target.files[0];
+        const url = URL.createObjectURL(file);
+        audioPlayer.src = url;
+    
+        const audioContext = new (window.AudioContext ||
+          window.webkitAudioContext)();
+        const reader = new FileReader();
+    
+        reader.onload = function (e) {
+          audioContext.decodeAudioData(e.target.result, function (buffer) {
+            const duration = buffer.duration;
+            audioPlayer.addEventListener("play", () =>
+              syncAudioWithGraph(duration)
+            );
+          });
+        };
+    
+        reader.readAsArrayBuffer(file);
+      }
+    
+      function getStartTime() {
+        const startTimeInput = document.getElementById("startTime").value;
+        const startTime = new Date(startTimeInput).getTime();
+        // startTime set to audioEnd - audio duration
+        console.log("START TIME:", new Date(startTime));
+        return startTime;
+      }
+    
+      function drawChart(labels, datasets) {
+        const ctx = document.getElementById("myChart").getContext("2d");
+    
+        if (chart) {
+          chart.destroy();
+        }
+    
+        chart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: datasets,
+          },
+          options: {
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                type: "linear",
+                position: "bottom",
+                title: {
+                  display: true,
+                  text: "Time (seconds)",
+                },
+                ticks: {
+                  stepSize: 2,
+                },
+              },
+            },
+            plugins: {
+              annotation: {
+                annotations: {
+                  line1: {
+                    type: "line",
+                    xMin: 0,
+                    xMax: 0,
+                    borderColor: "red",
+                    borderWidth: 2,
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+    
+      function syncAudioWithGraph(timestamp) {
+        const inter = setInterval(() => {
+          const currentTime = audioPlayer.currentTime;
+          const graphTime = currentTime;
+          chart.options.plugins.annotation.annotations.line1.xMin =
+            graphTime + 0.1;
+          chart.options.plugins.annotation.annotations.line1.xMax =
+            graphTime + 0.1;
+          chart.update("none");
+        }, 100);
+    
+        audioPlayer.addEventListener("pause", () => {
+          clearInterval(inter);
+        });
+      }
+    
+      function toggleFullscreen() {
+        // toogle hidden class on #form div
+        document.getElementById("form").classList.toggle("hidden");
+        // toggle fullscreen class on #fullscreenContainer div
+        document
+          .getElementById("fullscreenContainer")
+          .classList.toggle("fullscreen-container");
+      }
+    </script>
+  </body>
+</html>

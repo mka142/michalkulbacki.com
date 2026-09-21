@@ -1,0 +1,21 @@
+{
+  "name": "PWA Project",
+  "short_name": "PWA",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#ffffff",
+  "description": "A Progressive Web App for managing time series data with a fader interface.",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

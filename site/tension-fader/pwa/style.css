@@ -1,0 +1,123 @@
+:root {
+  --fader-width: 60%;
+  --line-width: 1px;
+  --fader-height: 128px;
+  --white: #b3b3b3;
+  --fader-bg: #000000d1;
+  --container-bg: #1a1a1a;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+}
+
+#mixing-container {
+  background-color: var(--container-bg);
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#mixing-board {
+  width: 200px;
+  background-color: var(--fader-bg);
+  top: 5%;
+  bottom: 5%;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 2px solid var(--white);
+  border-radius: 8px;
+}
+
+.level-line,
+.level-grid-line {
+  background-color: var(--white);
+  width: 100%;
+  height: var(--line-width);
+  display: flex;
+  justify-content: end;
+  position: relative;
+}
+
+.level-number {
+  color: var(--white);
+  margin-right: 5px;
+  position: absolute;
+  transform: translateY(-50%);
+  background-color: black;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.level-line.shorter-line div:first-child {
+  width: 100%;
+  height: 100%;
+  margin-left: 30%;
+  margin-right: 30%;
+  background-color: black;
+}
+
+.level-grid-line div {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  margin-left: 15%;
+  margin-right: 15%;
+  position: relative;
+}
+
+#fader {
+  position: absolute;
+  width: var(--fader-width);
+  height: var(--fader-height);
+  margin-left: calc((50% - var(--fader-width) / 2));
+  margin-right: calc((50% - var(--fader-width) / 2));
+  cursor: pointer;
+  display: block;
+  z-index: 10;
+  box-shadow: rgba(254, 254, 254, 0.29) 0px 4px 2px 0px,
+    rgba(255, 255, 255, 0.33) 0px 6px 10px 0px;
+}
+
+.button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 10px;
+  background-color: rgba(0, 0, 255, 0.376);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+}
+
+.vertical-line {
+  position: absolute;
+  top: 50px;
+  background: var(--container-bg);
+  width: 16px;
+  bottom: 50px;
+  z-index: 1;
+  border: 1px solid var(--fader-bg);
+  border-radius: 10px;
+  right: auto;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.button-left {
+  left: 10px;
+  right: auto;
+}

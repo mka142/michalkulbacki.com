@@ -1,0 +1,60 @@
+<!-- filepath: /pwa-project/pwa-project/src/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Progressive Web App</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('service-worker.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            })
+            .catch(error => {
+              console.error('ServiceWorker registration failed: ', error);
+            });
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="mixing-container">
+      <div id="mixing-board">
+        <div id="fader">
+          <div style="height: 20px; background: #777; width: 100%; border-bottom: 2px solid #2f2f2f;"></div>
+          <div style="height: 12px; width: 100%; background: #545454; border-bottom: solid 2px #777;"></div>
+          <div style="height: 17px; width: 100%; background: #5c5c5c; border-bottom: 4px solid #363636;"></div>
+          <div style="height: 6px; width: 100%; background: #545454"></div>
+          <div style="height: 4px; width: 100%; background: var(--white)"></div>
+          <div style="height: 6px; width: 100%; background: #545454"></div>
+          <div style="height: 18px; width: 100%; background: #5c5c5c; border-top: 4px solid #363636;"></div>
+          <div style="height: 12px; width: 100%; background: #545454; border-top: solid 2px #777; border-top: 2px solid #2f2f2f;"></div>
+          <div style="height: 20px; background: #777; width: 100%; border-top: 2px solid #2f2f2f;"></div>
+        </div>
+        <div class="vertical-line"></div>
+        <div class="level-line"><div class="level-number">10</div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-line shorter-line">
+          <div></div>
+          <div class="level-number">5</div>
+        </div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-line"><div class="level-number">0</div></div>
+      </div>
+    </div>
+    <button class="button" onclick="exportTimeSeriesToJsonFile()">Pobierz dane</button>
+    <button class="button button-left" onclick="alert('Potencjometr gromadzi dane: czas i wartość. Aby wyczyścić dane potencjometru należy odświeżyć stronę.')">info</button>
+    <script src="index.js"></script>
+  </body>
+</html>

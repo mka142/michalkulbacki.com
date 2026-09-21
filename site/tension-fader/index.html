@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Potencjometr suwakowy</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      :root {
+        --fader-width: 60%;
+        --line-width: 1px;
+        --fader-height: 128px;
+        --white: #b3b3b3;
+        --fader-bg: #000000d1;
+        --container-bg: #1a1a1a;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        /* prevent text selection */
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+      }
+      #mixing-container {
+        background-color: var(--container-bg);
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+      }
+      #mixing-board {
+        width: 200px;
+
+        background-color: #000000d1;
+        top: 5%;
+        bottom: 5%;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 2px solid var(--white);
+        border-radius: 8px;
+      }
+      .level-line,
+      .level-grid-line {
+        background-color: var(--white);
+        width: 100%;
+        height: var(--line-width);
+        display: flex;
+        justify-content: end;
+        position: relative;
+      }
+      .level-number {
+        color: var(--white);
+        margin-right: 5px;
+        position: absolute;
+        transform: translateY(-50%);
+        background-color: black;
+        padding: 5px;
+        font-size: 14px;
+      }
+      .level-line.shorter-line div:first-child {
+        width: 100%;
+        height: 100%;
+        margin-left: 30%;
+        margin-right: 30%;
+        background-color: black;
+      }
+
+      .level-grid-line div {
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        margin-left: 15%;
+        margin-right: 15%;
+        position: relative;
+      }
+      #fader {
+        position: absolute;
+        width: var(--fader-width);
+        height: var(--fader-height);
+        margin-left: calc((50% - var(--fader-width) / 2));
+        margin-right: calc((50% - var(--fader-width) / 2));
+        cursor: pointer;
+        display: block;
+        z-index: 10;
+        box-shadow: rgba(254, 254, 254, 0.29) 0px 4px 2px 0px,
+          rgba(255, 255, 255, 0.33) 0px 6px 10px 0px;
+      }
+      .button {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        padding: 10px;
+        background-color: rgba(0, 0, 255, 0.376);
+        color: var(--white);
+        border: none;
+        cursor: pointer;
+      }
+      .vertical-line {
+        position: absolute;
+        top: 50px;
+        background: var(--container-bg);
+        width: 16px;
+        bottom: 50px;
+        z-index: 1;
+        border: 1px solid var(--fader-bg);
+        border-radius: 10px;
+        right: auto;
+        left: 50%;
+        transform: translate(-50%, 0);
+      }
+      .button-left {
+        left: 10px;
+        right: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mixing-container">
+      <div id="mixing-board">
+        <!-- no format-->
+        <div id="fader">
+          <div
+            style="
+              height: 20px;
+              background: #777;
+              width: 100%; /*! box-shadow: 0 4px 8px 0 rgba(254, 254, 254, 0.29), 0 6px 20px 0 rgba(255, 255, 255, 0.33); */
+              border-bottom: 2px solid #2f2f2f;
+            "
+          ></div>
+          <div
+            style="
+              height: 12px;
+              width: 100%;
+              background: #545454;
+              border-bottom: solid 2px #777;
+            "
+          ></div>
+          <div
+            style="
+              height: 17px;
+              width: 100%;
+              background: #5c5c5c;
+              border-bottom: 4px solid #363636;
+            "
+          ></div>
+          <div style="height: 6px; width: 100%; background: #545454"></div>
+          <div style="height: 4px; width: 100%; background: var(--white)"></div>
+          <div style="height: 6px; width: 100%; background: #545454"></div>
+          <div
+            style="
+              height: 18px;
+              width: 100%;
+              background: #5c5c5c;
+              border-top: 4px solid #363636;
+            "
+          ></div>
+          <div
+            style="
+              height: 12px;
+              width: 100%;
+              background: #545454;
+              border-top: solid 2px #777;
+              border-top: 2px solid #2f2f2f;
+            "
+          ></div>
+          <div
+            style="
+              height: 20px;
+              background: #777;
+              width: 100%; /*! box-shadow: 0 4px 8px 0 rgba(254, 254, 254, 0.20), 0 6px 20px 0 rgba(255, 255, 255, 0); */
+              border-top: 2px solid #2f2f2f;
+            "
+          ></div>
+        </div>
+        <div class="vertical-line"></div>
+        <div class="level-line"><div class="level-number">10</div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+
+        <div class="level-line shorter-line">
+          <div></div>
+          <div class="level-number">5</div>
+        </div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-grid-line"><div></div></div>
+        <div class="level-line"><div class="level-number">0</div></div>
+      </div>
+    </div>
+    <button class="button" onclick="exportTimeSeriesToJsonFile()">
+      Pobierz dane
+    </button>
+    <button
+      class="button button-left"
+      onclick="alert('Potencjometr gromadzi dane: czas i wartość. Aby wyczyścić dane potencjometru należy odświeżyć stronę.')"
+    >
+      info
+    </button>
+    <script>
+      // when user clicks on the fader, change it's top css property appropriately to the mouse position
+      // make sure the fader doesn't go out of bounds
+
+      const timeseries = [];
+      window.timeseries = timeseries;
+
+      const VALUES_RANGE = 10;
+
+      const isLastValueRepeat = (value) =>
+        timeseries.length > 0 &&
+        timeseries[timeseries.length - 1].value === value;
+
+      function addTimeseries(time, value) {
+        // if last value is VALUE_RANGE or 0, don't add the same value again
+        if ([VALUES_RANGE, 0].includes(value) && isLastValueRepeat(value)) {
+          return;
+        }
+        timeseries.push({ time, value });
+      }
+
+      const fader = document.getElementById("fader");
+      const mixingBoard = document.getElementById("mixing-board");
+      let isMouseDown = false;
+      let isMouseOver = false;
+
+      // set on start fader to the bottom
+      fader.style.top = mixingBoard.getBoundingClientRect().height - 128 + "px";
+
+      document.addEventListener("mouseup", () => {
+        isMouseDown = false;
+        isMouseOver = false;
+      });
+      // mobile
+      document.addEventListener("touchend", () => {
+        isMouseDown = false;
+        isMouseOver = false;
+      });
+
+      function isFaderUnderClientCoordinates(clientX, clientY) {
+        const faderRect = fader.getBoundingClientRect();
+        return (
+          clientX >= faderRect.left &&
+          clientX <= faderRect.right &&
+          clientY >= faderRect.top &&
+          clientY <= faderRect.bottom
+        );
+      }
+
+      document.addEventListener("mousemove", (e) => {
+        if (isMouseDown && !isMouseOver) {
+          isMouseOver = isFaderUnderClientCoordinates(e.clientX, e.clientY);
+        }
+      });
+      // mobile
+      document.addEventListener("touchmove", (e) => {
+        if (isMouseDown && !isMouseOver) {
+          isMouseOver = isFaderUnderClientCoordinates(
+            e.touches[0].clientX,
+            e.touches[0].clientY
+          );
+        }
+      });
+
+      document.addEventListener("mousedown", () => {
+        isMouseDown = true;
+      });
+      // mobile
+      document.addEventListener("touchstart", () => {
+        isMouseDown = true;
+      });
+
+      function onCursorMove(clientX, clientY) {
+        if (isMouseOver && isMouseDown) {
+          const faderRect = fader.getBoundingClientRect();
+          const mixingBoardRect = mixingBoard.getBoundingClientRect();
+          const top = clientY - mixingBoardRect.top - faderRect.height / 2;
+          const time = Date.now();
+          if (top < 0) {
+            fader.style.top = "0px";
+            addTimeseries(time, VALUES_RANGE);
+          } else if (top > mixingBoardRect.height - faderRect.height) {
+            fader.style.top = mixingBoardRect.height - faderRect.height + "px";
+            addTimeseries(time, 0);
+          } else {
+            fader.style.top = top + "px";
+
+            addTimeseries(
+              time,
+              (
+                VALUES_RANGE -
+                (top / mixingBoardRect.height) * VALUES_RANGE
+              ).toFixed(2)
+            );
+          }
+        }
+      }
+
+      document.addEventListener("mousemove", (e) => {
+        onCursorMove(e.clientX, e.clientY);
+      });
+      // mobile
+      document.addEventListener("touchmove", (e) => {
+        onCursorMove(e.touches[0].clientX, e.touches[0].clientY);
+      });
+
+      function exportTimeSeriesToJsonFile() {
+        const dataStr =
+          "data:text/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(timeseries));
+        const downloadAnchorNode = document.createElement("a");
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "timeseries.json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+      }
+    </script>
+    <script src="index.js"></script>
+  </body>
+</html>

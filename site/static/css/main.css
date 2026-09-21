@@ -1,4 +1,12 @@
+/* Colour scheme. Layout below is scheme independent and reads these. */
 @media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #151515;
+    --color-text: #9e9e9e;
+    --color-muted: #8a8a8a;
+    --color-rule: #343434;
+    --color-link: #4fb0c6;
+  }
   body {
     background-color: #151515;
     color: #9e9e9e;
@@ -19,12 +27,19 @@
   }
 }
 @media (prefers-color-scheme: light) {
+  :root {
+    --color-bg: #f5f5f5;
+    --color-text: #333;
+    --color-muted: #5e5e5e;
+    --color-rule: #dcdcdc;
+    --color-link: #0066bb;
+  }
   body {
     background-color: #f5f5f5;
     color: #333;
   }
   a {
-    color: #0077cc;
+    color: #0066bb;
   }
   ::-moz-selection {
     /* Code for Firefox */
@@ -39,4 +54,103 @@
   }
 }
 
+/* A reading column. Without this the page runs edge to edge on a wide screen.
+   1rem is 14pt, set in fonts/main.css, so 42rem is roughly 780px of text. */
+body {
+  max-width: 42rem;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 5vw, 3rem) 1rem;
+  line-height: 1.6;
+}
 
+header {
+  margin-bottom: 2.5rem;
+}
+
+header h1 {
+  margin: 0 0 0.5rem;
+}
+
+.quote {
+  margin: 1rem 0 0;
+  color: var(--color-muted);
+}
+
+.quote blockquote {
+  margin: 0;
+  font-style: italic;
+}
+
+.quote blockquote p {
+  margin: 0;
+}
+
+.quote figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.85em;
+}
+
+.lang {
+  margin: 0 0 1.5rem;
+  text-align: right;
+  font-size: 0.85em;
+}
+
+article {
+  margin-bottom: 2.5rem;
+}
+
+article h2 {
+  margin-bottom: 0.75rem;
+}
+
+article p {
+  margin: 0 0 1rem;
+  text-wrap: pretty;
+}
+
+.note {
+  color: var(--color-muted);
+  font-size: 0.85em;
+}
+
+dl {
+  margin: 0;
+}
+
+dt {
+  margin-top: 1.25rem;
+  font-weight: bold;
+}
+
+dt:first-child {
+  margin-top: 0;
+}
+
+dd {
+  margin: 0.25rem 0 0;
+}
+
+footer {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-rule);
+}
+
+/* Contact links sit on one row and wrap on a narrow screen. address is set in
+   the mono face by fonts/main.css, which is the look this keeps. */
+footer address {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}

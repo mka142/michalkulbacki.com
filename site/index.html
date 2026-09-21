@@ -1,73 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
+    <meta
+      name="description"
+      content="Michał Kulbacki - pianista i kompozytor, student matematyki, inżynier oprogramowania. Projekty, narzędzia muzyczne i kontakt."
+    />
+    <link rel="canonical" href="https://michalkulbacki.com/" />
+    <link rel="alternate" hreflang="pl" href="https://michalkulbacki.com/" />
+    <link rel="alternate" hreflang="en" href="https://michalkulbacki.com/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://michalkulbacki.com/" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <title>MichaŁ Kulbacki</title>
-    <link rel="stylesheet" href="static/fonts/main.css" />
-    <link rel="stylesheet" href="static/css/main.css" />
+    <title>Michał Kulbacki</title>
+    <link rel="stylesheet" href="/static/fonts/main.css" />
+    <link rel="stylesheet" href="/static/css/main.css" />
   </head>
   <body>
     <header>
+      <p class="lang"><a href="/en/" hreflang="en" lang="en">English</a></p>
       <h1>Michał Kulbacki</h1>
-      <p>
-        <cite
-          >Czy to tylko nie ta część rzeczywistości, wydana pod weryfikację
-          innych?</cite
-        >
-        <span style="color: #00000000">- Ja</span>
-      </p>
+      <figure class="quote">
+        <blockquote>
+          <p>
+            Jak wiemy, są znane wiadome; są rzeczy, o których wiemy, że je
+            wiemy. Wiemy też, że są znane niewiadome; to znaczy wiemy, że są
+            rzeczy, których nie wiemy. Ale są też nieznane niewiadome - te, o
+            których nie wiemy, że ich nie wiemy.
+          </p>
+        </blockquote>
+        <figcaption>Donald Rumsfeld</figcaption>
+      </figure>
     </header>
     <main>
       <article>
-        <h2>Aktualności</h2>
+        <h2>O mnie</h2>
+        <p>
+          Muzyka i informatyka to u mnie jedna praca, nie dwie. Komponuję,
+          koncertuję jako pianista i buduję oprogramowanie, a najciekawsze
+          rzeczy dzieją się tam, gdzie te dziedziny się spotykają.
+        </p>
+        <p>
+          Studiowałem kompozycję w Akademii Muzycznej im. Karola Lipińskiego we
+          Wrocławiu, obecnie studiuję matematykę. Piszę na zespoły kameralne i
+          orkiestrę; współpracowałem między innymi z Operą Wrocławską, Ensemble
+          Musikfabrik i Ensemble Écoute. Jestem laureatem konkursów
+          kompozytorskich i pianistycznych.
+        </p>
+        <p>
+          Od 2019 roku pracuję jako inżynier oprogramowania w
+          <a href="https://diveinai.com/#contact">DIVEINAI</a>, gdzie odpowiadam
+          za architekturę, wdrożenia i utrzymanie platformy produkcyjnej.
+          W badaniach zajmuję się informatyką medyczną, ostatnio również
+          uczeniem maszynowym, a także technologią dla muzyki na żywo:
+          synchronizacją rozproszonych wykonawców, pomiarem napięcia muzycznego
+          u publiczności oraz różnymi zastosowaniami modelu BYOD.
+        </p>
       </article>
-      <hr />
-      <section>
-        <article>
-          <h3>(Wybrana) praca twórcza</h3>
-          <ul>
-            <li>
-              <cite>Interludia do Preludiów Op.28 F. Chopina</cite> -
-              <time datetime="2024-10">2023/2024</time>
-              <progress value="10" max="11"></progress>
-            </li>
-            
-          </ul>
-        </article>
-        <article>
-          <h3>Archiwum</h3>
-        </article>
-      </section>
       <article>
-        <h2>Inne</h2>
+        <h2>Obecne projekty</h2>
+        <dl>
+          <dt><a class="header" href="https://agogica.app">Agogica.app</a></dt>
+          <dd>
+            Sieć synchronizacji czasu rzeczywistego dla zespołów muzycznych.
+            Wykonawcy łączą się przez własne urządzenia i podczas koncertu
+            pozostają zgrani: wspólna nawigacja po partyturze, śledzenie taktów
+            i sygnały wykraczające poza zwykły click track.
+          </dd>
+          <dt>
+            <a class="header" href="https://iam.pl/pl/wyniki-pierwszej-edycji-programu-iam-cocompose">IAM CoCompose 2026-2027</a>
+          </dt>
+          <dd>
+            Program Instytutu Adama Mickiewicza łączący muzykę współczesną z
+            polską sztuką włókna. Jako laureat pierwszej edycji piszę utwór na
+            zamówienie dla Ensemble des Équilibres.
+          </dd>
+          <dt>
+            <a class="header" href="https://startup.pfr.pl/program/szkola-pionierow-pfr"
+              >Szkoła Pionierów PFR</a
+            >
+          </dt>
+          <dd>
+            Program inkubacji startupów prowadzony przez PFR od 2018 roku.
+            Interdyscyplinarne zespoły przechodzą w nim drogę od pomysłu przez
+            walidację i prototyp aż po prezentację przed inwestorami.
+          </dd>
+        </dl>
+      </article>
+      <article>
+        <h2>Wybrane publikacje</h2>
+        <dl>
+          <!-- Raport z projektu: wstawić <a href="..."> wokół tytułu, gdy będzie opublikowany. -->
+          <dt>Co czują wrocławianie?</dt>
+          <dd>
+            Raport z projektu FAST 2025 zrealizowanego we Wrocławskim Centrum
+            Akademickim: pomiar napięcia muzycznego u publiczności podczas
+            koncertów muzyki współczesnej, prowadzony autorskim systemem CRDI.
+          </dd>
+          <dt>
+            <a class="header" href="https://doi.org/10.1007/978-3-031-82957-4_9" lang="en"
+              >Medical Protocols and AI-Driven Algorithms for Enhanced Monitoring of Cardiac Implantable Electronic Devices</a
+            >
+          </dt>
+          <dd>
+            <cite lang="en">Computer Aided Systems Theory - EUROCAST 2024</cite>,
+            LNCS 15173, Springer, 2025.
+          </dd>
+          <dt>
+            <a class="header" href="https://doi.org/10.1007/978-3-031-82957-4_10" lang="en"
+              >A Survey of Machine Learning Methods for Analyzing Synovitis Arthritis in Human Joints</a
+            >
+          </dt>
+          <dd>
+            <cite lang="en">Computer Aided Systems Theory - EUROCAST 2024</cite>,
+            LNCS 15173, Springer, 2025.
+          </dd>
+          <dt>
+            <a class="header" href="https://doi.org/10.1007/978-3-031-82957-4_12" lang="en"
+              >Advancements and Applications of Medical Human Digital Twin Technology in Cerebral Palsy Diagnosis, Therapy, and Rehabilitation</a
+            >
+          </dt>
+          <dd>
+            <cite lang="en">Computer Aided Systems Theory - EUROCAST 2024</cite>,
+            LNCS 15173, Springer, 2025.
+          </dd>
+        </dl>
+      </article>
+      <article>
+        <h2>Narzędzia</h2>
         <dl>
           <dt>
-            <a class="header" href="stave-generator">Generator pięciolinii</a>
+            <a class="header" href="/stave-generator">Generator pięciolinii</a>
           </dt>
           <dd>
             Narzędzie do tworzenia pięciolinii muzycznych. Można w nim tworzyć
             pięciolinie w dowolnej ilości, na dowolnym formacie papieru.
           </dd>
+          <dt><a class="header" href="/golden-chord">Złoty akord</a></dt>
+          <dd>
+            Narzędzie do generowania akordów według zasady złotego podziału, z
+            przybliżeniem do stroju równomiernie temperowanego.
+          </dd>
+          <dt><a class="header" href="/tension-fader">Test potencjometru</a></dt>
+          <dd>
+            Narzędzie do gromadzenia danych czasowych z potencjometru
+            suwakowego. Dostępne także jako
+            <a href="/tension-fader/pwa">aplikacja PWA</a>. Pobrane dane można
+            przeglądać na stronie <a href="/tension-fader/chart">Wykres</a>.
+          </dd>
           <dt>
-            <a class="header" href="golden-chord">Złoty akord</a>
-            <dd>
-              Narzędzie do generowania akordów według zasady złotego podziału, z przybliżeniem do stroju równomiernie temperowanego
-            </dd>
+            <a class="header" href="/receipt-tracker">Śledzenie paragonów</a>
           </dt>
+          <dd>
+            Proste narzędzie do śledzenia paragonów. Pozwala na dodawanie zdjęć
+            paragonów, rozpoznawanie tekstu (OCR) i wyciąganie daty, kwoty oraz
+            tytułu. Wszystkie dane są przechowywane lokalnie w przeglądarce.
+          </dd>
         </dl>
       </article>
     </main>
     <footer>
       <address>
-        Kontakt:
         <a href="mailto:mk@michalkulbacki.com">mk@michalkulbacki.com</a>
+        <a href="https://github.com/mka142">GitHub</a>
+        <a href="https://www.linkedin.com/in/mkulbacki/">LinkedIn</a>
       </address>
     </footer>
   </body>

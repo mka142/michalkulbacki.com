@@ -1,0 +1,61 @@
+name: Deploy
+
+# Pushes to main deploy. A manual run from the Actions tab is the only other way in.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never let two deploys interleave: rsync --delete on a shared target is not
+# safe to run concurrently. Queue instead of cancelling, so the last push wins.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Validate and deploy to dhosting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      # The site has no build step, so validation is the only gate. It covers
+      # the two pages written by hand; the generator pages vendor third-party
+      # markup and are left alone.
+      - name: Validate the HTML
+        run: npx --yes html-validate@11 site/index.html site/en/index.html
+
+      - name: Configure the SSH client
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Upload site/ to ~/michalkulbacki.com/public_html
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          rsync -az --delete \
+            --filter='P /.htaccess' \
+            --filter='P /.well-known/' \
+            -e "ssh -i $HOME/.ssh/deploy_key -p $DEPLOY_PORT -o IdentitiesOnly=yes" \
+            site/ \
+            "$DEPLOY_USER@$DEPLOY_HOST:michalkulbacki.com/public_html/"
+
+      - name: Remove the SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

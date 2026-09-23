@@ -31,6 +31,16 @@ jobs:
       - name: Validate the HTML
         run: npx --yes html-validate@11 site/index.html site/en/index.html
 
+      # The PostHog project key lives in a secret, not in git. Fail rather than
+      # deploy a site that silently records nothing.
+      - name: Insert the PostHog project key
+        env:
+          POSTHOG_PROJECT_KEY: ${{ secrets.POSTHOG_PROJECT_KEY }}
+        run: |
+          test -n "$POSTHOG_PROJECT_KEY" || { echo "POSTHOG_PROJECT_KEY secret is not set"; exit 1; }
+          sed -i "s/__POSTHOG_PROJECT_KEY__/$POSTHOG_PROJECT_KEY/" site/static/js/posthog.js
+          ! grep -q "__POSTHOG_PROJECT_KEY__" site/static/js/posthog.js
+
       - name: Configure the SSH client
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}

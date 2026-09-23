@@ -11,7 +11,7 @@ Hand-written static HTML, no build step: `site/` is the published site, byte for
 | --- | --- |
 | `site/index.html` | home page, Polish |
 | `site/en/index.html` | home page, English |
-| `site/static/` | shared stylesheets and the Latin Modern font files |
+| `site/static/` | shared stylesheets, analytics scripts and the Latin Modern font files |
 | `site/stave-generator/` | blank stave paper generator |
 | `site/golden-chord/` | golden ratio chord calculator |
 | `site/tension-fader/` | slider potentiometer data recorder, with a PWA and a chart view |

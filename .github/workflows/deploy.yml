@@ -38,8 +38,8 @@ jobs:
           POSTHOG_PROJECT_KEY: ${{ secrets.POSTHOG_PROJECT_KEY }}
         run: |
           test -n "$POSTHOG_PROJECT_KEY" || { echo "POSTHOG_PROJECT_KEY secret is not set"; exit 1; }
-          sed -i "s/__POSTHOG_PROJECT_KEY__/$POSTHOG_PROJECT_KEY/" site/static/js/posthog.js
-          ! grep -q "__POSTHOG_PROJECT_KEY__" site/static/js/posthog.js
+          sed -i "s/__POSTHOG_PROJECT_KEY__/$POSTHOG_PROJECT_KEY/" site/index.html site/en/index.html
+          ! grep -q "__POSTHOG_PROJECT_KEY__" site/index.html site/en/index.html
 
       - name: Configure the SSH client
         env:

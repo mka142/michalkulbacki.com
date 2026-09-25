@@ -25,21 +25,35 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v7
 
-      # The site has no build step, so validation is the only gate. It covers
-      # the two pages written by hand; the generator pages vendor third-party
-      # markup and are left alone.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Eleventy wraps the two hand-written pages in the shared layout
+      # (src/_includes/base.njk) and copies the generator pages' vendored
+      # markup through untouched. Output lands in site/, which isn't
+      # committed.
+      - name: Build the site
+        run: npm run build
+
       - name: Validate the HTML
         run: npx --yes html-validate@11 site/index.html site/en/index.html
 
       # The PostHog project key lives in a secret, not in git. Fail rather than
-      # deploy a site that silently records nothing.
+      # deploy a site that silently records nothing. Every page under site/
+      # gets the snippet (see src/_includes/base.njk and
+      # scripts/inject-analytics.js), so the placeholder is replaced everywhere.
       - name: Insert the PostHog project key
         env:
           POSTHOG_PROJECT_KEY: ${{ secrets.POSTHOG_PROJECT_KEY }}
         run: |
           test -n "$POSTHOG_PROJECT_KEY" || { echo "POSTHOG_PROJECT_KEY secret is not set"; exit 1; }
-          sed -i "s/__POSTHOG_PROJECT_KEY__/$POSTHOG_PROJECT_KEY/" site/index.html site/en/index.html
-          ! grep -q "__POSTHOG_PROJECT_KEY__" site/index.html site/en/index.html
+          grep -rl "__POSTHOG_PROJECT_KEY__" site --include='*.html' -Z | xargs -0 sed -i "s/__POSTHOG_PROJECT_KEY__/$POSTHOG_PROJECT_KEY/"
+          ! grep -rq "__POSTHOG_PROJECT_KEY__" site --include='*.html'
 
       - name: Configure the SSH client
         env:

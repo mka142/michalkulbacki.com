@@ -16,6 +16,8 @@ module.exports = function (eleventyConfig) {
     "src/android-chrome-512x512.png",
     "src/site.webmanifest",
     "src/about.txt",
+    "src/sitemap.xml",
+    "src/robots.txt",
   ];
   for (const path of passthroughOnly) {
     eleventyConfig.addPassthroughCopy(path);

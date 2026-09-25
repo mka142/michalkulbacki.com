@@ -19,6 +19,7 @@ Built with [Eleventy](https://www.11ty.dev/), a very small static site generator
 | `src/golden-chord/` | golden ratio chord calculator |
 | `src/tension-fader/` | slider potentiometer data recorder, with a PWA and a chart view |
 | `src/receipt-tracker/` | local receipt tracker with OCR |
+| `src/sitemap.xml`, `src/robots.txt` | for search engines; add new pages to the sitemap by hand |
 | `scripts/inject-analytics.js` | postbuild step: adds the PostHog snippet to the vendored tool pages |
 
 The two home pages are content-only, wrapped in the shared layout at build time; only their front matter (language, description, canonical URL) differs.
